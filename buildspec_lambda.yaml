@@ -11,13 +11,9 @@ phases:
   build:
     commands:
       - sam build
-      - >
-        aws cloudformation package 
-        --template-file template.yml
-        --output-template packaged.yml
-        --s3-bucket $BUCKET
+      - sam package --s3-bucket $BUCKET --output-template-file packaged.yaml
 
 artifacts:
   type: zip
   files:
-    - template-output.yml
+    - packaged.yaml
