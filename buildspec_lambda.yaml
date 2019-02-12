@@ -7,8 +7,7 @@ env:
 phases:
   build:
     commands:
-      - npm ci
-      - npm test
+      - npm install
       - >
         aws cloudformation package 
         --template-file template.yml
