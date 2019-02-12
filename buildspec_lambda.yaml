@@ -2,14 +2,11 @@ version: 0.2
 
 env:
   variables:
-    BUCKET: danilop-packages
+    BUCKET: codepipeline-eu-west-1-202477100601
 
 phases:
   install:
     commands:
-      - aws --version
-      - which aws
-      - head `which aws`
       - pip install --upgrade awscli
       - pip install --upgrade aws-sam-cli
       - aws --version
