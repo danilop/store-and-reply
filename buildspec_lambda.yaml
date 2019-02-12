@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  variables:
+    BUCKET: danilop-packages
+    
+phases:
+  build:
+    commands:
+      - npm ci
+      - npm test
+      - >
+     	  aws cloudformation package 
+		    --template-file template.yml
+			--output-template template-output.yml
+			--s3_bucket $BUCKET
+
+artifacts:
+  type: zip
+  files:
+    - template-output.yml

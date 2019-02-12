@@ -1,0 +1,15 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_REPO_NAME: demo
+    IMAGE_TAG: store-and-reply
+    ECR_REPO: 024700040865.dkr.ecr.eu-west-1.amazonaws.com/demo
+
+phases:
+  build:
+    commands:
+      - $(aws ecr get-login --no-include-email)
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG      
+      - docker push $ECR_REPO:$IMAGE_TAG
