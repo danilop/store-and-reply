@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Store and reply to user messages.
+
+Resources:
+
+  StoreAndReplyAPIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: adapterAPI.handler
+      Runtime: nodejs8.10
+      CodeUri: src/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MessagesTable
+        - Statement:
+          - Effect: Allow
+            Action:
+              - 'comprehend:DetectDominantLanguage'
+              - 'translate:TranslateText'
+            Resource: '*'
+      Environment:
+        Variables:
+          REPLY_MESSAGE: 'Message submitted via HTTP'
+          REPLY_LANGUAGE: 'en'
+          MESSAGES_TABLE: !Ref MessagesTable
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /send
+            Method: GET
+
+  StoreAndReplySQSFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: adapterSQS.handler
+      Runtime: nodejs8.10
+      CodeUri: src/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MessagesTable
+        - Statement:
+          - Effect: Allow
+            Action:
+              - 'comprehend:DetectDominantLanguage'
+              - 'translate:TranslateText'
+            Resource: '*'
+      Environment:
+        Variables:
+          REPLY_MESSAGE: 'Message submitted via SQS'
+          REPLY_LANGUAGE: 'en'
+          MESSAGES_TABLE: !Ref MessagesTable
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt StoreAndReplyQueue.Arn
+            BatchSize: 10
+
+  StoreAndReplyQueue:
+    Type: AWS::SQS::Queue
+
+  MessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: 'PAY_PER_REQUEST'
+      AttributeDefinitions:
+        - AttributeName: 'user'
+          AttributeType: 'S'
+        - AttributeName: 'timestamp'
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: 'user'
+          KeyType: 'HASH'
+        - AttributeName: 'timestamp'
+          KeyType: 'RANGE'
+    
+Outputs:
+
+    StoreAndReplyAPI:
+      Description: "API Gateway endpoint URL for Prod stage for StoreAndReplyAPI function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/send/"
+
+    StoreAndReplyQueue:
+      Description: "SQS queue processed by the StoreAndReplySQS function"
+      Value: !GetAtt StoreAndReplyQueue.QueueName

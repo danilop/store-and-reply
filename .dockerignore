@@ -1,0 +1,7 @@
+.aws-sam
+packaged.yaml
+deploy*
+.git
+.gitignore
+src/node_modules
+src/npm-debug.log
