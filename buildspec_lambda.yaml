@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    BUCKET: codepipeline-eu-west-1-202477100601
+    BUCKET: danilop-packages
 
 phases:
   install:
