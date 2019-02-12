@@ -5,9 +5,12 @@ env:
     BUCKET: danilop-packages
 
 phases:
+  install:
+    commands:
+      - pip install --user aws-sam-cli
   build:
     commands:
-      - npm install
+      - sam build
       - >
         aws cloudformation package 
         --template-file template.yml
