@@ -7,10 +7,13 @@ env:
 phases:
   install:
     commands:
+      - aws --version
       - which aws
       - head `which aws`
-      - pip3 install --upgrade awscli
-      - pip3 install --upgrade aws-sam-cli
+      - pip install --upgrade awscli
+      - pip install --upgrade aws-sam-cli
+      - aws --version
+      - sam --version
   build:
     commands:
       - sam build
