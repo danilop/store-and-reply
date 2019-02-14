@@ -18,8 +18,8 @@ exports.handler = async (event, context) => {
     const records = event.Records;
 
     for(let record of records) {
-        const json = JSON.parse(record.body);
-        buildResponse(await StoreAndReply.process(record.user, record.message));
+        const jsonRecord = JSON.parse(record.body);
+        buildResponse(await StoreAndReply.process(jsonRecord.user, jsonRecord.message));
     }
 
     return {};
