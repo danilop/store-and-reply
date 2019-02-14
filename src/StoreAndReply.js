@@ -7,12 +7,39 @@ const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const comprehend = new AWS.Comprehend();
 const translate = new AWS.Translate();
+const cloudWatch = new AWS.CloudWatch();
 
 const MESSAGES_TABLE = process.env.MESSAGES_TABLE;
 const REPLY_MESSAGE = process.env.REPLY_MESSAGE;
 const REPLY_LANGUAGE = process.env.REPLY_LANGUAGE;
 
+const METRIC_NAMESPACE = process.env.METRIC_NAMESPACE;
+const METRIC_DIMENSION_NAME = process.env.METRIC_DIMENSION_NAME;
+const METRIC_DIMENSION_VALUE = process.env.METRIC_DIMENSION_VALUE;
+const METRIC_NAME = process.env.METRIC_NAME;
+
 // Your Business Logic
+
+async putMetric(unit, value) {
+    const metricData = await cloudWatch.putMetricData({
+        MetricData: [
+            {
+                MetricName: METRIC_NAME,
+                Dimensions: [
+                    {
+                        Name: METRIC_DIMENSION_NAME,
+                        Value: METRIC_DIMENSION_VALUE
+                    }
+                ],
+                Timestamp: new Date,
+                Unit: unit,
+                Value: value
+            }
+        ],
+        Namespace: METRIC_NAMESPACE
+    }).promise();
+    console.log(metricData);
+}
 
 class StoreAndReply {
     static async process(user, message) {
@@ -33,7 +60,7 @@ class StoreAndReply {
         const lang = languageData.Languages.reduce(
             (acc, val) => {
                 if (val.Score > acc.Score) { return val; } else { return acc; }
-            }, { Score: 0}).LanguageCode;
+            }, { Score: 0 }).LanguageCode;
 
         var replyMessage;
         if (lang !== REPLY_LANGUAGE) {
@@ -56,6 +83,10 @@ class StoreAndReply {
                 message: message
             }
         }).promise();
+
+        await putMetric('char', message.length);
+        console.log('Processed: ', METRIC_NAMESPACE, METRIC_DIMENSION_NAME,
+            METRIC_DIMENSION_VALUE, message.length);
 
         console.log('replyMessage: ', replyMessage);
         return replyMessage;

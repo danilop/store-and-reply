@@ -10,6 +10,10 @@ Resources:
       Handler: adapterAPI.handler
       Runtime: nodejs8.10
       CodeUri: src/
+      AutoPublishAlias: live
+      DeploymentPreference:
+#         Type: Canary10Percent5Minutes
+          Type: Linear10PercentEvery1Minute
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MessagesTable
@@ -19,11 +23,20 @@ Resources:
               - 'comprehend:DetectDominantLanguage'
               - 'translate:TranslateText'
             Resource: '*'
+        - Statement:
+          - Effect: "Allow"
+            Action:
+              - "cloudwatch:putMetricData"
+            Resource: "*"
       Environment:
         Variables:
-          REPLY_MESSAGE: 'Message submitted via HTTP'
-          REPLY_LANGUAGE: 'en'
           MESSAGES_TABLE: !Ref MessagesTable
+          REPLY_MESSAGE: 'Message submitted via API'
+          REPLY_LANGUAGE: 'en'
+          METRIC_NAMESPACE: !Ref AWS::StackName
+          METRIC_DIMENSION_NAME: 'Interface'
+          METRIC_DIMENSION_VALUE: 'API'
+          METRIC_NAME: 'Message Chars'
       Events:
         GetResource:
           Type: Api
@@ -37,6 +50,9 @@ Resources:
       Handler: adapterSQS.handler
       Runtime: nodejs8.10
       CodeUri: src/
+      AutoPublishAlias: live
+      DeploymentPreference:
+          Type: AllAtOnce
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MessagesTable
@@ -46,11 +62,20 @@ Resources:
               - 'comprehend:DetectDominantLanguage'
               - 'translate:TranslateText'
             Resource: '*'
+        - Statement:
+          - Effect: "Allow"
+            Action:
+              - "cloudwatch:putMetricData"
+            Resource: "*"
       Environment:
         Variables:
+          MESSAGES_TABLE: !Ref MessagesTable
           REPLY_MESSAGE: 'Message submitted via SQS'
           REPLY_LANGUAGE: 'en'
-          MESSAGES_TABLE: !Ref MessagesTable
+          METRIC_NAMESPACE: !Ref AWS::StackName
+          METRIC_DIMENSION_NAME: 'Interface'
+          METRIC_DIMENSION_VALUE: 'SQS'
+          METRIC_NAME: 'Message Chars'
       Events:
         MySQSEvent:
           Type: SQS
