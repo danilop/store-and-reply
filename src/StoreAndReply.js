@@ -20,7 +20,7 @@ const METRIC_NAME = process.env.METRIC_NAME;
 
 // Your Business Logic
 
-async putMetric(unit, value) {
+async function putMetric(unit, value) {
     const metricData = await cloudWatch.putMetricData({
         MetricData: [
             {
