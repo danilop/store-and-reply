@@ -113,7 +113,7 @@ Outputs:
 
     StoreAndReplyAPI:
       Description: "API Gateway endpoint URL for Prod stage for StoreAndReplyAPI function"
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/send/"
+      Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/prod/send/"
 
     StoreAndReplyQueue:
       Description: "SQS queue processed by the StoreAndReplySQS function"
