@@ -4,12 +4,19 @@ Description: Store and reply to user messages.
 
 Resources:
 
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      TracingEnabled: true
+
   StoreAndReplyAPIFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: adapterAPI.handler
       Runtime: nodejs8.10
       CodeUri: src/
+      Tracing: Active
       AutoPublishAlias: live
       DeploymentPreference:
 #         Type: Canary10Percent5Minutes
@@ -43,6 +50,7 @@ Resources:
           Properties:
             Path: /send
             Method: GET
+            RestApiId: !Ref MyApi
 
   StoreAndReplySQSFunction:
     Type: AWS::Serverless::Function
