@@ -58,6 +58,7 @@ Resources:
       Handler: adapterSQS.handler
       Runtime: nodejs8.10
       CodeUri: src/
+      Tracing: Active
       AutoPublishAlias: live
       DeploymentPreference:
           Type: AllAtOnce
