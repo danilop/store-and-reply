@@ -1,4 +1,4 @@
-"use strict";
+ç"use strict";
 
 // AWS X-Ray
 const AWSXRay = require('aws-xray-sdk');
@@ -17,6 +17,21 @@ const METRIC_NAMESPACE = process.env.METRIC_NAMESPACE;
 const METRIC_DIMENSION_NAME = process.env.METRIC_DIMENSION_NAME;
 const METRIC_DIMENSION_VALUE = process.env.METRIC_DIMENSION_VALUE;
 const METRIC_NAME = process.env.METRIC_NAME;
+
+// Set HTTPS Keep-Alive for the AWS SDK
+
+const https = require('https');
+const sslAgent = new https.Agent({
+    keepAlive: true,
+    maxSockets: 64,
+    rejectUnauthorized: true
+});
+sslAgent.setMaxListeners(0);
+AWS.config.update({
+    httpOptions: {
+        agent: sslAgent
+    }
+});
 
 // Your Business Logic
 
