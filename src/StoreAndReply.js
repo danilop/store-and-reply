@@ -1,4 +1,4 @@
-ç"use strict";
+"use strict";
 
 // AWS X-Ray
 const AWSXRay = require('aws-xray-sdk');
