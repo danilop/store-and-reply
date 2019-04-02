@@ -1,22 +1,9 @@
 "use strict";
 
 // AWS X-Ray
+// const AWS = require('aws-sdk');
 const AWSXRay = require('aws-xray-sdk');
 const AWS = AWSXRay.captureAWS(require('aws-sdk'));
-//const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-const comprehend = new AWS.Comprehend();
-const translate = new AWS.Translate();
-const cloudWatch = new AWS.CloudWatch();
-
-const MESSAGES_TABLE = process.env.MESSAGES_TABLE;
-const REPLY_MESSAGE = process.env.REPLY_MESSAGE;
-const REPLY_LANGUAGE = process.env.REPLY_LANGUAGE;
-
-const METRIC_NAMESPACE = process.env.METRIC_NAMESPACE;
-const METRIC_DIMENSION_NAME = process.env.METRIC_DIMENSION_NAME;
-const METRIC_DIMENSION_VALUE = process.env.METRIC_DIMENSION_VALUE;
-const METRIC_NAME = process.env.METRIC_NAME;
 
 // Set HTTPS Keep-Alive for the AWS SDK
 
@@ -32,6 +19,20 @@ AWS.config.update({
         agent: sslAgent
     }
 });
+
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+const comprehend = new AWS.Comprehend();
+const translate = new AWS.Translate();
+const cloudWatch = new AWS.CloudWatch();
+
+const MESSAGES_TABLE = process.env.MESSAGES_TABLE;
+const REPLY_MESSAGE = process.env.REPLY_MESSAGE;
+const REPLY_LANGUAGE = process.env.REPLY_LANGUAGE;
+
+const METRIC_NAMESPACE = process.env.METRIC_NAMESPACE;
+const METRIC_DIMENSION_NAME = process.env.METRIC_DIMENSION_NAME;
+const METRIC_DIMENSION_VALUE = process.env.METRIC_DIMENSION_VALUE;
+const METRIC_NAME = process.env.METRIC_NAME;
 
 // Your Business Logic
 
