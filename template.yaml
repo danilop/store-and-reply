@@ -40,7 +40,7 @@ Resources:
       Environment:
         Variables:
           MESSAGES_TABLE: !Ref MessagesTable
-          REPLY_MESSAGE: 'Good morning from Norway! Message submitted via API'
+          REPLY_MESSAGE: 'Message submitted via API'
           REPLY_LANGUAGE: 'en'
           METRIC_NAMESPACE: !Ref AWS::StackName
           METRIC_DIMENSION_NAME: 'Interface'
